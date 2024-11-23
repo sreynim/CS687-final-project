@@ -27,12 +27,13 @@ class PendulumEnv:
         self.cur_angle = next_angle
         self.cur_velocity = next_velocity
     
-    # returns the return from the episode given the neural network nn
-    def get_return(self, nn):
+    # returns the return from the episode given the model
+    # (assuming the model has a method called get_action(array of state)) that returns an action value)
+    def get_return(self, model):
         self.reset_state()
         total_discounted_rewards = 0
         for t in range(200):
-            action = nn.get_action(np.array([self.cur_angle, self.cur_velocity], dtype=np.float64))
+            action = model.get_action(np.array([self.cur_angle, self.cur_velocity], dtype=np.float64))
             reward = self.get_reward(action)
             total_discounted_rewards += reward
             self.transition_to_next_state(action)
