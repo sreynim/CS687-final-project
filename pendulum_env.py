@@ -36,7 +36,7 @@ class PendulumEnv:
             action = model.get_action(np.array([self.cur_angle, self.cur_velocity], dtype=np.float64))
             reward = self.get_reward(action)
             total_discounted_rewards += reward
-            self.transition_to_next_state(action)
+            self.step(action)
         return total_discounted_rewards
     
     # returns the reward from performing this action (torque applied to the pivot)
