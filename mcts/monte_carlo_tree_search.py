@@ -4,7 +4,7 @@ import mcts.util_mcts as util_mcts
 
 # monte carlo tree search
 class MCTS:
-    def __init__(self, env, C, branch_exploration_param, num_rollouts, num_iterations, initial_state):
+    def __init__(self, env, C, branch_exploration_param, num_rollouts, num_iterations, initial_state, epsilon):
         self.env = env
         if not self.env.in_bounds(initial_state):
             raise ValueError("initial_state is not in environment bounds")
@@ -13,25 +13,26 @@ class MCTS:
         self.num_rollouts = num_rollouts
         self.num_iterations = num_iterations
         self.initial_state = initial_state
+        self.epsilon = epsilon
     
     # run monte carlo tree search for num_iterations (different starting nodes), each iteration having num_rollouts from the same node
     # returns the root node of the entire tree
-    def run_mcts(self):
+    def run_mcts(self, init_state):
         root_node = ActionNode(None, None)
         starting_node = root_node
         for i in range(self.num_iterations):
             print("iteration: " + str(i + 1))
-            starting_node = self.search_from_root(starting_node)
+            starting_node = self.search_from_root(starting_node, init_state)
         return root_node
     
     # returns the best (greedy) action from the given root node for num_iterations
-    def search_from_root(self, start):
+    def search_from_root(self, start, init_state):
         for i in range(self.num_rollouts):
-            print("--- rollout: " + str(i + 1))
+            # print("--- rollout: " + str(i + 1))
             initial_selected, path_to_node = self.select_node(start)
             selected_node = self.expand(initial_selected) # change selected node to this new child resulting from expansion
             path_to_node_for_action = path_to_node + [selected_node.get_action()] # update path to node to include the new action
-            total_return = self.run_simulation(start, selected_node, path_to_node_for_action)
+            total_return = self.run_simulation(start, selected_node, path_to_node_for_action, init_state)
             self.backup(selected_node, total_return)
         return self.choose_action_ucb(start)
             
@@ -78,8 +79,8 @@ class MCTS:
 
     # returns the total discounted return in env for one full simulation / episode from the given node
     # using random actions
-    def run_simulation(self, start, node, path_to_node):
-        self.env.set_state(self.initial_state)
+    def run_simulation(self, start, node, path_to_node, init_state):
+        self.env.set_state(init_state)
         action_path_root_to_start = self.get_action_path_from_initial(start)
         full_path = action_path_root_to_start + path_to_node
         full_path = [a for a in full_path if a is not None]
@@ -114,5 +115,55 @@ class MCTS:
             node = node.get_parent()
         return action_path
 
-    # # returns the total discounted return from following the tree made by mcts, using node values as 
-    # def evaluate_mcts_policy(self, root_node):
+    # returns the total discounted return from following the deterministic tree policy using epsilon soft policy, using values of nodes as "state-action values"
+    def evaluate_tree_policy(self, node):
+        policy = [] # deterministic policy
+        while not node.is_leaf():
+            policy.append(node.get_action())
+            children_vals = [child.get_value() for child in node.get_children()]
+            actions = [child.get_action() for child in node.get_children()]
+            chosen_action = util_mcts.epsilon_greedy_action(actions, children_vals, self.epsilon)
+            policy.append(chosen_action)
+        policy = [a for a in policy if a is not None]
+
+        # run simulation using found policy
+        self.env.set_state(self.env.get_init_state())
+        cur_state = self.env.get_cur_state()
+
+        total_discounted_rewards = 0
+        terminated = False
+        iteration = 0
+        while not terminated:
+            action = policy[iteration]
+            next_state, reward, is_terminal = self.env.step(action)
+            total_discounted_rewards += (self.env.get_discount() ** iteration) * reward 
+            iteration += 1
+            cur_state = next_state
+            if is_terminal:
+                terminated = True
+        return total_discounted_rewards
+
+    # returns the total discounted return from following the epsilon-soft policy from the learned mcts tree
+    def evaluate_mcts_policy(self, root_node):
+        pass
+    
+    # returns the epsilon-soft policy from this learned mcts tree
+    def get_epsilon_soft_policy(self, root_node):
+        pass
+        
+    # returns an array containing a tuple (list for each state of "state-values" of each of its children, and list of corresponding actions) for each state in env
+    def get_child_vals_for_each_state(self):
+        dim_r, dim_c = self.env.get_dimensions()
+        grid = [[] for _ in range(dim_r)]
+        for r in range(dim_r):
+            for c in range(dim_c):
+                root = self.run_mcts((r, c))
+                actions = [child.get_action() for child in root.get_children()]
+                vals = [child.get_value() for child in root.get_children()]
+                grid[r].append((vals, actions))
+        return grid
+
+    # prints the best (greedy) action from all the nodes
+    def print_greedy_policy_from_nodes(self, root_node):
+        # learn a tree from each state in the environment, then print the "best" action (greedily) from each state
+        pass

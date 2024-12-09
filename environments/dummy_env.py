@@ -108,6 +108,9 @@ class DummyEnv:
     def get_cur_state(self):
         return self.state
     
+    def get_init_state(self):
+        return (0, 0)
+    
     # returns the ending state of the agent if following this action path from the initial state (0, 0)
     # action_path is array of actions
     # assume actions always succeed TODO: right?? no..

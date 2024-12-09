@@ -14,8 +14,7 @@ import mcts.util_mcts as util_mcts
 if __name__ == "__main__":
     if sys.argv[1] == "mcts-dummy": # monte carlo tree search on dummy environment (just for testing)
         env = DummyEnv()
-        mcts = MCTS(env=env, C=math.sqrt(2), branch_exploration_param=0.5, num_rollouts=20, num_iterations=20, initial_state=(-1, 6))
-        root = mcts.run_mcts()
-        print(util_mcts.print_tree(root))
+        mcts = MCTS(env=env, C=math.sqrt(2), branch_exploration_param=0.5, num_rollouts=20, num_iterations=20, initial_state=(0, 0), epsilon=0.2)
+        grid = mcts.get_child_vals_for_each_state()
 
 

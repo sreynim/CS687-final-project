@@ -1,6 +1,6 @@
 import numpy as np
-# returns probabilities for epsilon greedy policy for mcts nodes
-def get_episilon_greedy_probs(actions_taken_already, actions, epsilon):
+# returns probabilities for epsilon greedy policy for mcts nodes, but specifically for exploring different branches
+def get_episilon_greedy_probs_exploration(actions_taken_already, actions, epsilon):
     num_actions = len(actions)
     num_taken = len(actions_taken_already)
     prob_func = lambda x: ((1 - epsilon) / num_taken) + (epsilon / num_actions) if x in actions_taken_already else (epsilon / num_actions)
@@ -8,14 +8,27 @@ def get_episilon_greedy_probs(actions_taken_already, actions, epsilon):
 
     return vectorized(actions)
 
-# returns whether to explore new actions or not (for mcts)
+# returns whether to explore new actions or not (for mcts), specifically for exploring different branches
 def explore_epsilon_greedy(actions_taken_already, actions, epsilon):
-    print(actions)
-    probs = get_episilon_greedy_probs(actions_taken_already, actions, epsilon)
-    print(probs)
+    probs = get_episilon_greedy_probs_exploration(actions_taken_already, actions, epsilon)
     choice = np.random.choice(a=actions, p=probs)
-    print(choice)
     return choice not in actions_taken_already
+
+# returns probabilities for epsilon greedy policy
+def get_episilon_greedy_probs(actions, vals, epsilon):
+    num_actions = len(actions)
+    best_val = np.max(vals)
+    num_best = len(np.where(vals == best_val)[0])
+
+    prob_func = lambda x: ((1 - epsilon) / num_best) + (epsilon / num_actions) if x == best_val else (epsilon / num_actions)
+    vectorized = np.vectorize(prob_func) # val to prob
+
+    return vectorized(vals)
+
+# returns an action index based on epsilon greedy policy
+def epsilon_greedy_action(actions, vals, epsilon):
+    probs = get_episilon_greedy_probs(actions, vals, epsilon)
+    return np.random.choice(a=actions, p=probs)
 
 # returns the argmax (index) of the given array
 # if there are multiple, returns one of the best indices uniformly at random
