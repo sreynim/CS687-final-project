@@ -20,3 +20,10 @@ def argmax(arr):
     best_val = np.max(arr)
     best_indices = np.argwhere(arr == best_val)[0]
     return np.random.choice(best_indices)
+
+# prints a tree
+def print_tree(node, level=0):
+    print(" " * level * 2 + str(node.get_action()))
+    # recursion to print child nodes
+    for child in node.get_children():
+        print_tree(child, level + 1)

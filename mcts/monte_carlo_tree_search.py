@@ -27,6 +27,8 @@ class MCTS:
             print("--- rollout: " + str(i + 1))
             initial_selected, path_to_node = self.select_node(start)
             selected_node = self.expand(initial_selected) # change selected node to this new child resulting from expansion
+            if len(selected_node.get_children()) > 1:
+                print("FOUND ONE ============================")
             path_to_node_for_action = path_to_node + [selected_node.get_action()] # update path to node to include the new action
             total_return = self.run_simulation(start, selected_node, path_to_node_for_action)
             self.backup(selected_node, total_return)
@@ -41,8 +43,8 @@ class MCTS:
             actions_taken_already = [child.get_action() for child in node.get_children()]
             if len(actions_taken_already) == len(self.env.get_actions()):
                 node = self.choose_action_ucb(node) # from existing nodes
-            else:
-                explore = util_mcts.explore_epsilon_greedy(actions_taken_already, self.env.get_actions(), self.branch_exploration_param) # explore or not
+            else: # we havent explored all actions yet
+                explore = util_mcts.explore_epsilon_greedy(actions_taken_already, self.env.get_actions(), self.branch_exploration_param) # choose unexplored or one already explored?
                 if explore:
                     not_taken = [a for a in self.env.get_actions() if a not in actions_taken_already]
                     child = ActionNode(np.random.choice(not_taken), node)
