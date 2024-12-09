@@ -130,3 +130,8 @@ class DummyEnv:
         for action in action_path:
             self.step(action)
         return self.state
+    
+    def in_bounds(self, state):
+        r, c = state
+        dim_r, dim_c = self.get_dimensions()
+        return r >= 0 and r < dim_r and c >= 0 and c < dim_c

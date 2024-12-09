@@ -6,6 +6,8 @@ import mcts.util_mcts as util_mcts
 class MCTS:
     def __init__(self, env, C, branch_exploration_param, num_rollouts, num_iterations, initial_state):
         self.env = env
+        if not self.env.in_bounds(initial_state):
+            raise ValueError("initial_state is not in environment bounds")
         self.exploration_param = C
         self.branch_exploration_param = branch_exploration_param
         self.num_rollouts = num_rollouts
