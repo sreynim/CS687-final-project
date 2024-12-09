@@ -4,14 +4,27 @@ import mcts.util_mcts as util_mcts
 
 # monte carlo tree search
 class MCTS:
-    def __init__(self, env, C, branch_exploration_param):
+    def __init__(self, env, C, branch_exploration_param, num_rollouts, num_iterations):
         self.env = env
         self.exploration_param = C
         self.branch_exploration_param = branch_exploration_param
+        self.num_rollouts = num_rollouts
+        self.num_iterations = num_iterations
+    
+    # run monte carlo tree search for num_iterations (different starting nodes), each iteration having num_rollouts from the same node
+    # returns the root node of the entire tree
+    def run_mcts(self):
+        root_node = ActionNode(None, None)
+        starting_node = root_node
+        for i in range(self.num_iterations):
+            print("iteration: " + str(i + 1))
+            starting_node = self.search_from_root(starting_node)
+        return root_node
     
     # returns the best (greedy) action from the given root node for num_iterations
-    def search_from_root(self, start, num_iterations):
-        for i in range(num_iterations):
+    def search_from_root(self, start):
+        for i in range(self.num_rollouts):
+            print("--- rollout: " + str(i + 1))
             initial_selected, path_to_node = self.select_node(start)
             selected_node = self.expand(initial_selected) # change selected node to this new child resulting from expansion
             path_to_node_for_action = path_to_node + [selected_node.get_action()] # update path to node to include the new action
@@ -63,10 +76,10 @@ class MCTS:
     # using random actions
     def run_simulation(self, start, node, path_to_node):
         self.env.reset()
-        if path_to_node[0] is None:
-            path_to_node = path_to_node[1:]
         action_path_root_to_start = self.get_action_path_from_initial(start)
-        cur_state = self.env.get_state_from_action_path(self.get_action_path_from_initial(start) + path_to_node)
+        full_path = action_path_root_to_start + path_to_node
+        full_path = [a for a in full_path if a is not None]
+        cur_state = self.env.get_state_from_action_path(full_path)
 
         total_discounted_rewards = 0
         terminated = False
