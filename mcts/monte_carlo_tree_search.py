@@ -1,6 +1,6 @@
 import numpy as np
 from action_node import ActionNode
-import util
+import util_mcts
 
 # monte carlo tree search
 class MCTS:
@@ -30,7 +30,7 @@ class MCTS:
             if len(actions_taken_already) == len(self.env.get_actions()):
                 node = self.choose_action_ucb(node) # from existing nodes
             else:
-                explore = util.explore_epsilon_greedy(actions_taken_already, self.env.get_actions(), self.branch_exploration_param) # explore or not
+                explore = util_mcts.explore_epsilon_greedy(actions_taken_already, self.env.get_actions(), self.branch_exploration_param) # explore or not
                 if explore:
                     not_taken = [a for a in self.env.get_actions() if a not in actions_taken_already]
                     child = ActionNode(np.random.choice(not_taken), node)
@@ -50,7 +50,7 @@ class MCTS:
         #     print("jkcnkdjnc")
         #     print([child.get_action() for child in children])
         #     print(ucb_vals)
-        return children[util.argmax(ucb_vals)]
+        return children[util_mcts.argmax(ucb_vals)]
     
     # add random child node / action to the given node (the given node is guaranteed to be a leaf node)
     def expand(self, node):
@@ -63,7 +63,7 @@ class MCTS:
     # using random actions
     def run_simulation(self, start, node, path_to_node):
         action_path_root_to_start = self.get_action_path_from_initial(start)
-        cur_state = self.env.get_state_from_action_path(self.get_action_path_from_initial(start) + path_to_node) # deterministically
+        cur_state = self.env.get_state_from_action_path(self.get_action_path_from_initial(start) + path_to_node) # TODO: make it not deterministic
 
         self.env.set_state(cur_state)
 

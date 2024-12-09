@@ -100,4 +100,5 @@ class GridWorldEnv:
         return ["AU", "AD", "AL", "AR"]
     
     def get_state_from_action_path(self, action_path):
-        pass
+        for action in action_path:
+            self.step(action)

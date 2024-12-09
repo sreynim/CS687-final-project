@@ -110,18 +110,22 @@ class DummyEnv:
     
     # returns the ending state of the agent if following this action path from the initial state (0, 0)
     # action_path is array of actions
-    # assume actions always succeed TODO: right??
+    # assume actions always succeed TODO: right?? no..
+    # def get_state_from_action_path(self, action_path):
+    #     state = [0, 0]
+    #     for action in action_path:
+    #         if action == "AU":
+    #             state[0] = state[0] - 1
+    #         elif action == "AD":
+    #             state[0] = state[0] + 1
+    #         elif action == "AL":
+    #             state[1] = state[1] - 1
+    #         elif action == "AR":
+    #             state[1] = state[1] + 1
+    #         state[0] = max(min(state[0], 4), 0)
+    #         state[1] = max(min(state[1], 4), 0)
+    #     return (state[0], state[1])
+
     def get_state_from_action_path(self, action_path):
-        state = [0, 0]
         for action in action_path:
-            if action == "AU":
-                state[0] = state[0] - 1
-            elif action == "AD":
-                state[0] = state[0] + 1
-            elif action == "AL":
-                state[1] = state[1] - 1
-            elif action == "AR":
-                state[1] = state[1] + 1
-            state[0] = max(min(state[0], 4), 0)
-            state[1] = max(min(state[1], 4), 0)
-        return (state[0], state[1])
+            self.step(action)
