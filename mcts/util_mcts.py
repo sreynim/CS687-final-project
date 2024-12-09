@@ -43,3 +43,8 @@ def print_tree(node, level=0):
     # recursion to print child nodes
     for child in node.get_children():
         print_tree(child, level + 1)
+    
+# prints array nicely
+def print_arr(arr):
+    for row in arr:
+        print(row)

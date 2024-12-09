@@ -14,9 +14,9 @@ import mcts.util_mcts as util_mcts
 if __name__ == "__main__":
     if sys.argv[1] == "mcts-dummy": # monte carlo tree search on dummy environment (just for testing)
         env = DummyEnv()
-        mcts = MCTS(env=env, C=math.sqrt(2), branch_exploration_param=0.5, num_rollouts=20, num_iterations=20, initial_state=(0, 0), epsilon=0.2)
+        mcts = MCTS(env=env, C=math.sqrt(2), branch_exploration_param=0.3, num_rollouts=200, num_iterations=200, initial_state=(0, 0), epsilon=0.2)
         grid = mcts.get_child_vals_for_each_state()
-        r = mcts.evaluate_mcts_epsilon_soft_policy(grid)
-        print(r)
+        policy = mcts.get_greedy_policy_from_nodes(grid)
+        util_mcts.print_arr(policy)
 
 

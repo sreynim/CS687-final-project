@@ -177,7 +177,14 @@ class MCTS:
                 grid[r].append((vals, actions))
         return grid
 
-    # prints the best (greedy) action from all the nodes
-    def print_greedy_policy_from_nodes(self, root_node):
-        # learn a tree from each state in the environment, then print the "best" action (greedily) from each state
-        pass
+    # returns the best (greedy) action from all the nodes using "q-values" from grid (deterministic policy)
+    def get_greedy_policy_from_nodes(self, grid):
+        dim_r, dim_c = self.env.get_dimensions()
+        policy = [[] for _ in range(dim_r)]
+        for r in range(dim_r):
+            for c in range(dim_c):
+                actions = grid[r][c][1]
+                vals = grid[r][c][0]
+                argmax = util_mcts.argmax(vals)
+                policy[r].append(actions[argmax])
+        return policy
