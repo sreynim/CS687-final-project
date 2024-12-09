@@ -4,12 +4,13 @@ import mcts.util_mcts as util_mcts
 
 # monte carlo tree search
 class MCTS:
-    def __init__(self, env, C, branch_exploration_param, num_rollouts, num_iterations):
+    def __init__(self, env, C, branch_exploration_param, num_rollouts, num_iterations, initial_state):
         self.env = env
         self.exploration_param = C
         self.branch_exploration_param = branch_exploration_param
         self.num_rollouts = num_rollouts
         self.num_iterations = num_iterations
+        self.initial_state = initial_state
     
     # run monte carlo tree search for num_iterations (different starting nodes), each iteration having num_rollouts from the same node
     # returns the root node of the entire tree
@@ -76,7 +77,7 @@ class MCTS:
     # returns the total discounted return in env for one full simulation / episode from the given node
     # using random actions
     def run_simulation(self, start, node, path_to_node):
-        self.env.reset()
+        self.env.set_state(self.initial_state)
         action_path_root_to_start = self.get_action_path_from_initial(start)
         full_path = action_path_root_to_start + path_to_node
         full_path = [a for a in full_path if a is not None]
@@ -110,3 +111,6 @@ class MCTS:
             action_path.append(node.get_action())
             node = node.get_parent()
         return action_path
+
+    # # returns the total discounted return from following the tree made by mcts, using node values as 
+    # def evaluate_mcts_policy(self, root_node):
