@@ -143,13 +143,27 @@ class MCTS:
                 terminated = True
         return total_discounted_rewards
 
-    # returns the total discounted return from following the epsilon-soft policy from the learned mcts tree
-    def evaluate_mcts_policy(self, root_node):
-        pass
-    
-    # returns the epsilon-soft policy from this learned mcts tree
-    def get_epsilon_soft_policy(self, root_node):
-        pass
+    # returns the total discounted return from following the epsilon-soft policy from the learned mcts tree's grid (representing something like "q-values")
+    def evaluate_mcts_epsilon_soft_policy(self, grid):
+        # run simulation using found policy
+        self.env.set_state(self.env.get_init_state())
+        cur_state = self.env.get_cur_state()
+
+        total_discounted_rewards = 0
+        terminated = False
+        iteration = 0
+        while not terminated:
+            grid_state_info = grid[cur_state[0]][cur_state[1]]
+            possible_actions = grid_state_info[1]
+            possible_actions_vals = grid_state_info[0]
+            action = util_mcts.epsilon_greedy_action(possible_actions, possible_actions_vals, self.epsilon)
+            next_state, reward, is_terminal = self.env.step(action)
+            total_discounted_rewards += (self.env.get_discount() ** iteration) * reward 
+            iteration += 1
+            cur_state = next_state
+            if is_terminal:
+                terminated = True
+        return total_discounted_rewards
         
     # returns an array containing a tuple (list for each state of "state-values" of each of its children, and list of corresponding actions) for each state in env
     def get_child_vals_for_each_state(self):

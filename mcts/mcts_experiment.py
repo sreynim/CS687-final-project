@@ -16,5 +16,7 @@ if __name__ == "__main__":
         env = DummyEnv()
         mcts = MCTS(env=env, C=math.sqrt(2), branch_exploration_param=0.5, num_rollouts=20, num_iterations=20, initial_state=(0, 0), epsilon=0.2)
         grid = mcts.get_child_vals_for_each_state()
+        r = mcts.evaluate_mcts_epsilon_soft_policy(grid)
+        print(r)
 
 
