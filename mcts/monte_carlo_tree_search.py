@@ -1,6 +1,6 @@
 import numpy as np
-from action_node import ActionNode
-import util_mcts
+from mcts.action_node import ActionNode
+import mcts.util_mcts
 
 # monte carlo tree search
 class MCTS:

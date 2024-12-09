@@ -4,11 +4,11 @@ import numpy as np
 import sys
 import math
 
-from monte_carlo_tree_search import MCTS
-from grid_world_env import GridWorldEnv
-from cat_vs_monsters_env import CatVsMonstersEnv
-from dummy_env import DummyEnv
-from action_node import ActionNode
+from mcts.monte_carlo_tree_search import MCTS
+from environments.grid_world_env import GridWorldEnv
+from environments.cats_vs_monsters_env import CatsVsMonsters
+from environments.dummy_env import DummyEnv
+from mcts.action_node import ActionNode
 
 if __name__ == "__main__":
     if sys.argv[1] == "mcts-dummy": # monte carlo tree search on dummy environment (just for testing)
