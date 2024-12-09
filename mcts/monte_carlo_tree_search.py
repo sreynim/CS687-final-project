@@ -115,34 +115,6 @@ class MCTS:
             node = node.get_parent()
         return action_path
 
-    # returns the total discounted return from following the deterministic tree policy using epsilon soft policy, using values of nodes as "state-action values"
-    def evaluate_tree_policy(self, node):
-        policy = [] # deterministic policy
-        while not node.is_leaf():
-            policy.append(node.get_action())
-            children_vals = [child.get_value() for child in node.get_children()]
-            actions = [child.get_action() for child in node.get_children()]
-            chosen_action = util_mcts.epsilon_greedy_action(actions, children_vals, self.epsilon)
-            policy.append(chosen_action)
-        policy = [a for a in policy if a is not None]
-
-        # run simulation using found policy
-        self.env.set_state(self.env.get_init_state())
-        cur_state = self.env.get_cur_state()
-
-        total_discounted_rewards = 0
-        terminated = False
-        iteration = 0
-        while not terminated:
-            action = policy[iteration]
-            next_state, reward, is_terminal = self.env.step(action)
-            total_discounted_rewards += (self.env.get_discount() ** iteration) * reward 
-            iteration += 1
-            cur_state = next_state
-            if is_terminal:
-                terminated = True
-        return total_discounted_rewards
-
     # returns the total discounted return from following the epsilon-soft policy from the learned mcts tree's grid (representing something like "q-values")
     def evaluate_mcts_epsilon_soft_policy(self, grid):
         # run simulation using found policy
