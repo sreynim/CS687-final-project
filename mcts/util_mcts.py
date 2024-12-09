@@ -10,8 +10,11 @@ def get_episilon_greedy_probs(actions_taken_already, actions, epsilon):
 
 # returns whether to explore new actions or not (for mcts)
 def explore_epsilon_greedy(actions_taken_already, actions, epsilon):
+    print(actions)
     probs = get_episilon_greedy_probs(actions_taken_already, actions, epsilon)
+    print(probs)
     choice = np.random.choice(a=actions, p=probs)
+    print(choice)
     return choice not in actions_taken_already
 
 # returns the argmax (index) of the given array

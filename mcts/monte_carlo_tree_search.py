@@ -27,8 +27,6 @@ class MCTS:
             print("--- rollout: " + str(i + 1))
             initial_selected, path_to_node = self.select_node(start)
             selected_node = self.expand(initial_selected) # change selected node to this new child resulting from expansion
-            if len(selected_node.get_children()) > 1:
-                print("FOUND ONE ============================")
             path_to_node_for_action = path_to_node + [selected_node.get_action()] # update path to node to include the new action
             total_return = self.run_simulation(start, selected_node, path_to_node_for_action)
             self.backup(selected_node, total_return)
@@ -48,8 +46,9 @@ class MCTS:
                 if explore:
                     not_taken = [a for a in self.env.get_actions() if a not in actions_taken_already]
                     child = ActionNode(np.random.choice(not_taken), node)
+                    node.add_child(child)
                     node = child
-                else:
+                else: # from existing nodes
                     node = self.choose_action_ucb(node)
         action_path.append(node.get_action())
         return (node, action_path)
