@@ -102,3 +102,4 @@ class GridWorldEnv:
     def get_state_from_action_path(self, action_path):
         for action in action_path:
             self.step(action)
+        return self.state

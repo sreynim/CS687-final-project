@@ -16,6 +16,6 @@ if __name__ == "__main__":
         mcts = MCTS(env=env, C=math.sqrt(2), branch_exploration_param=0.5)
         root_node = ActionNode(None, None)
         action_node = mcts.search_from_root(root_node, 20)
-        # print(action_node.get_action())
+        print(action_node)
 
 

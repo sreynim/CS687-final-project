@@ -1,6 +1,6 @@
 import numpy as np
 from mcts.action_node import ActionNode
-import mcts.util_mcts
+import mcts.util_mcts as util_mcts
 
 # monte carlo tree search
 class MCTS:
@@ -12,7 +12,6 @@ class MCTS:
     # returns the best (greedy) action from the given root node for num_iterations
     def search_from_root(self, start, num_iterations):
         for i in range(num_iterations):
-            print([child.get_action() for child in start.get_children()])
             initial_selected, path_to_node = self.select_node(start)
             selected_node = self.expand(initial_selected) # change selected node to this new child resulting from expansion
             path_to_node_for_action = path_to_node + [selected_node.get_action()] # update path to node to include the new action
@@ -37,6 +36,7 @@ class MCTS:
                     node = child
                 else:
                     node = self.choose_action_ucb(node)
+        action_path.append(node.get_action())
         return (node, action_path)
     
     # choose an action / child node using UCB criterion (upper confidence bound)
@@ -62,10 +62,11 @@ class MCTS:
     # returns the total discounted return in env for one full simulation / episode from the given node
     # using random actions
     def run_simulation(self, start, node, path_to_node):
+        self.env.reset()
+        if path_to_node[0] is None:
+            path_to_node = path_to_node[1:]
         action_path_root_to_start = self.get_action_path_from_initial(start)
-        cur_state = self.env.get_state_from_action_path(self.get_action_path_from_initial(start) + path_to_node) # TODO: make it not deterministic
-
-        self.env.set_state(cur_state)
+        cur_state = self.env.get_state_from_action_path(self.get_action_path_from_initial(start) + path_to_node)
 
         total_discounted_rewards = 0
         terminated = False

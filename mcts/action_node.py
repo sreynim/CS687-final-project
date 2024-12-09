@@ -57,4 +57,10 @@ class ActionNode:
     
     # returns this node's value
     def get_value(self):
-        return (self.total_return / self.playouts)
+        if self.playouts <= 0:
+            return 0
+        else:
+            return (self.total_return / self.playouts)
+
+    def __str__(self):
+        return f"ActionNode(action={self.action}, parent={self.parent.get_action() if self.parent is not None else "None"}, number of children={len(self.get_children())})"

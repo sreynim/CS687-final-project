@@ -13,3 +13,10 @@ def explore_epsilon_greedy(actions_taken_already, actions, epsilon):
     probs = get_episilon_greedy_probs(actions_taken_already, actions, epsilon)
     choice = np.random.choice(a=actions, p=probs)
     return choice not in actions_taken_already
+
+# returns the argmax (index) of the given array
+# if there are multiple, returns one of the best indices uniformly at random
+def argmax(arr):
+    best_val = np.max(arr)
+    best_indices = np.argwhere(arr == best_val)[0]
+    return np.random.choice(best_indices)
