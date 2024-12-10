@@ -21,7 +21,7 @@ class MCTS:
         root_node = ActionNode(None, None)
         starting_node = root_node
         for i in range(self.num_iterations):
-            print("iteration: " + str(i + 1))
+            # print("iteration: " + str(i + 1))
             starting_node = self.search_from_root(starting_node, init_state)
         return root_node
     
@@ -143,6 +143,7 @@ class MCTS:
         grid = [[] for _ in range(dim_r)]
         for r in range(dim_r):
             for c in range(dim_c):
+                print("currently running mcts for state " + str((r, c)))
                 root = self.run_mcts((r, c))
                 actions = [child.get_action() for child in root.get_children()]
                 vals = [child.get_value() for child in root.get_children()]
