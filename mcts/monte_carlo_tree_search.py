@@ -32,7 +32,7 @@ class MCTS:
             initial_selected, path_to_node = self.select_node(start)
             selected_node = self.expand(initial_selected) # change selected node to this new child resulting from expansion
             path_to_node_for_action = path_to_node + [selected_node.get_action()] # update path to node to include the new action
-            total_return = self.run_simulation(start, selected_node, path_to_node_for_action, init_state)
+            total_return = self.run_simulation(start, path_to_node_for_action, init_state)
             self.backup(selected_node, total_return)
         return self.choose_action_ucb(start)
             
@@ -79,7 +79,7 @@ class MCTS:
 
     # returns the total discounted return in env for one full simulation / episode from the given node
     # using random actions
-    def run_simulation(self, start, node, path_to_node, init_state):
+    def run_simulation(self, start, path_to_node, init_state):
         self.env.set_state(init_state)
         action_path_root_to_start = self.get_action_path_from_initial(start)
         full_path = action_path_root_to_start + path_to_node
@@ -110,7 +110,7 @@ class MCTS:
     def get_action_path_from_initial(self, node):
         node = node.get_parent()
         action_path = []
-        while node is not None: # go "up" the tree
+        while node is not None: # go "up" the    tree
             action_path.append(node.get_action())
             node = node.get_parent()
         return action_path
