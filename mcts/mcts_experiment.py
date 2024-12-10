@@ -8,7 +8,7 @@ import time
 
 from mcts.monte_carlo_tree_search import MCTS
 from environments.grid_world_env import GridWorldEnv
-from environments.cats_vs_monsters_env import CatsVsMonsters
+from environments.cat_vs_monsters_env2 import CatVsMonstersEnv
 from environments.dummy_env import DummyEnv
 from mcts.action_node import ActionNode
 import mcts.util_mcts as util_mcts
@@ -21,66 +21,66 @@ def experiment(env):
     default_epsilon = 0.1
     default_branch_param = 0.5
     init_state = env.get_init_state()
-    # experiment with different branch exploration parameters
-    branch_param_arr = [0.3, 0.5, 0.7]
-    branch_returns = []
-    for branch_param in branch_param_arr:
-        print("param " + str(branch_param))
-        env.reset()
-        mcts = MCTS(env=env, C=default_C, branch_exploration_param=branch_param, num_rollouts=default_rollouts, num_iterations=default_iterations, initial_state=init_state, epsilon=default_epsilon)
-        grid = mcts.get_child_vals_for_each_state()
-        branch_returns.append(mcts.evaluate_mcts_epsilon_soft_policy(grid))
-    print("branch returns = " + str(branch_returns))
+    # # experiment with different branch exploration parameters
+    # branch_param_arr = [0.3, 0.5, 0.7]
+    # branch_returns = []
+    # for branch_param in branch_param_arr:
+    #     print("param " + str(branch_param))
+    #     env.reset()
+    #     mcts = MCTS(env=env, C=default_C, branch_exploration_param=branch_param, num_rollouts=default_rollouts, num_iterations=default_iterations, initial_state=init_state, epsilon=default_epsilon)
+    #     grid = mcts.get_child_vals_for_each_state()
+    #     branch_returns.append(mcts.evaluate_mcts_epsilon_soft_policy(grid))
+    # print("branch returns = " + str(branch_returns))
 
-    # experiment with different UCB exploration params ("C")
-    C_arr = [0.5, 1, 2, 5]
-    C_returns = []
-    for C_val in C_arr:
-        print("C = " + str(C_val))
-        env.reset()
-        mcts = MCTS(env=env, C=C_val, branch_exploration_param=default_branch_param, num_rollouts=default_rollouts, num_iterations=default_iterations, initial_state=init_state, epsilon=default_epsilon)
-        grid = mcts.get_child_vals_for_each_state()
-        C_returns.append(mcts.evaluate_mcts_epsilon_soft_policy(grid))
-    print("C returns = " + str(C_returns))
+    # # experiment with different UCB exploration params ("C")
+    # C_arr = [0.5, 1, 2, 5]
+    # C_returns = []
+    # for C_val in C_arr:
+    #     print("C = " + str(C_val))
+    #     env.reset()
+    #     mcts = MCTS(env=env, C=C_val, branch_exploration_param=default_branch_param, num_rollouts=default_rollouts, num_iterations=default_iterations, initial_state=init_state, epsilon=default_epsilon)
+    #     grid = mcts.get_child_vals_for_each_state()
+    #     C_returns.append(mcts.evaluate_mcts_epsilon_soft_policy(grid))
+    # print("C returns = " + str(C_returns))
 
-    # experiment with different epsilon values
-    epsilon_arr = [0.1, 0.3, 0.5, 0.7, 0.9]
-    epsilon_returns = []
-    for ep in epsilon_arr:
-        print("epsilon = " + str(ep))
-        env.reset()
-        mcts = MCTS(env=env, C=default_C, branch_exploration_param=default_branch_param, num_rollouts=default_rollouts, num_iterations=default_iterations, initial_state=init_state, epsilon=ep)
-        grid = mcts.get_child_vals_for_each_state()
-        epsilon_returns.append(mcts.evaluate_mcts_epsilon_soft_policy(grid))
-    print("epsilon returns = " + str(epsilon_returns))
+    # # experiment with different epsilon values
+    # epsilon_arr = [0.1, 0.3, 0.5, 0.7, 0.9]
+    # epsilon_returns = []
+    # for ep in epsilon_arr:
+    #     print("epsilon = " + str(ep))
+    #     env.reset()
+    #     mcts = MCTS(env=env, C=default_C, branch_exploration_param=default_branch_param, num_rollouts=default_rollouts, num_iterations=default_iterations, initial_state=init_state, epsilon=ep)
+    #     grid = mcts.get_child_vals_for_each_state()
+    #     epsilon_returns.append(mcts.evaluate_mcts_epsilon_soft_policy(grid))
+    # print("epsilon returns = " + str(epsilon_returns))
 
     # experiment with different num_iterations / num_rollouts numbers
     best_num = get_return_vs_iterations_graph(env=env, C=default_C, branch_exploration_param=default_branch_param, initial_state=init_state, epsilon=default_epsilon)
 
-    # now identify the best parameters to get a final graph
-    best_branch_param = branch_param_arr[util_mcts.argmax(branch_returns)]
-    best_C = C_arr[util_mcts.argmax(C_returns)]
-    best_epsilon = epsilon_arr[util_mcts.argmax(epsilon_returns)]
-    print("best_branch_param = " + str(best_branch_param))
-    print("best_C = " + str(best_C))
-    print("best_epsilon = " + str(best_epsilon))
-    print("best number of rollouts and iterations = " + str(best_num))
-    best_num = get_return_vs_iterations_graph(env=env, C=best_C, branch_exploration_param=best_branch_param, initial_state=init_state, epsilon=best_epsilon)
-    print("final best number for rollouts and iterations is " + str(best_num))
+    # # now identify the best parameters to get a final graph
+    # best_branch_param = branch_param_arr[util_mcts.argmax(branch_returns)]
+    # best_C = C_arr[util_mcts.argmax(C_returns)]
+    # best_epsilon = epsilon_arr[util_mcts.argmax(epsilon_returns)]
+    # print("best_branch_param = " + str(best_branch_param))
+    # print("best_C = " + str(best_C))
+    # print("best_epsilon = " + str(best_epsilon))
+    # print("best number of rollouts and iterations = " + str(best_num))
+    # best_num = get_return_vs_iterations_graph(env=env, C=best_C, branch_exploration_param=best_branch_param, initial_state=init_state, epsilon=best_epsilon)
+    # print("final best number for rollouts and iterations is " + str(best_num))
 
-    # get final greedy policy
-    env.reset()
-    mcts = MCTS(env=env, C=best_C, branch_exploration_param=best_branch_param, num_rollouts=best_num, num_iterations=best_num, initial_state=init_state, epsilon=best_epsilon)
-    grid = mcts.get_child_vals_for_each_state()
-    policy = mcts.get_greedy_policy_from_nodes(grid)
-    util_mcts.print_arr(policy)
+    # # get final greedy policy
+    # env.reset()
+    # mcts = MCTS(env=env, C=best_C, branch_exploration_param=best_branch_param, num_rollouts=best_num, num_iterations=best_num, initial_state=init_state, epsilon=best_epsilon)
+    # grid = mcts.get_child_vals_for_each_state()
+    # policy = mcts.get_greedy_policy_from_nodes(grid)
+    # util_mcts.print_arr(policy)
 
 # experiment with different rollout / iterations vals and plot vs return from policy learned from tree
 def get_return_vs_iterations_graph(env, C, branch_exploration_param, initial_state, epsilon):
-    num_arr = [i * 100 for i in range(1,11)]
-    sum_returns = np.zeros((10,))
-    sum_times = np.zeros((10,))
-    for i in range(5): # average over 5 runthroughs
+    num_arr = [30, 80, 120]
+    sum_returns = np.zeros((1,))
+    sum_times = np.zeros((1,))
+    for i in range(1): # average over 5 runthroughs
         print("runthrough " + str(i + 1))
         num_returns = []
         eval_times = []
@@ -95,8 +95,8 @@ def get_return_vs_iterations_graph(env, C, branch_exploration_param, initial_sta
             eval_times.append(end_time - start_time)
         sum_returns = sum_returns + np.array(num_returns)
         sum_times = sum_times + np.array(eval_times)
-    avg_returns = sum_returns / 5
-    avg_times = sum_times / 5
+    avg_returns = sum_returns / 1
+    avg_times = sum_times / 1
     print("avg_returns = " + str(avg_returns))
     plot(num_arr, avg_returns, "Num Iterations / Rollouts", "Total discounted return from policy", "Return for Number of Iterations / Rollouts")
     plot(num_arr, avg_times, "Num Iterations / Rollouts", "Time taken to evaluate policy (s)", "Time needed to evaluate policy from num iterations / rollouts")
@@ -115,4 +115,10 @@ if __name__ == "__main__":
         experiment(env)
     elif sys.argv[1] == "mcts-grid":
         env = GridWorldEnv()
-        experiment(env)
+        env.reset()
+        best_num = get_return_vs_iterations_graph(env=env, C=1, branch_exploration_param=0.7, initial_state=(0,0), epsilon=0.1)
+        print("best_num = " + str(best_num))
+        mcts = MCTS(env=env, C=1, branch_exploration_param=0.7, num_rollouts=best_num, num_iterations=best_num, initial_state=(0,0), epsilon=0.1)
+        grid = mcts.get_child_vals_for_each_state()
+        print("total_discounted_rewards = " + str(mcts.evaluate_mcts_epsilon_soft_policy(grid)))
+        util_mcts.print_arr(mcts.get_greedy_policy_from_nodes(grid))
