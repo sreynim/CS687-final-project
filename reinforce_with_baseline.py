@@ -9,8 +9,8 @@ class RWB:
         if not self.env.in_bounds(initial_state):
             raise ValueError("initial_state is not in environment bounds")
         self.initial_state = initial_state
-        self.alpha = alpha     # step size for policy
-        self.b = b             # step size for baseline
+        self.alpha = alpha     
+        self.b = b             
         # initialize policy parameterization
         self.policy_params = {}
         for state in env.get_states():
@@ -26,8 +26,8 @@ class RWB:
         for ep in range(episodes):
             # generate the episode
             episode = self.create_episode()
-            # make the necessary updates to the parameters
-            self.make_updates(episode)
+            # make the updates to the parameters
+            self.make_updates_in_episode(episode)
             #print(episode)
 
 
@@ -36,9 +36,9 @@ class RWB:
         episode = []
         # initialize state
         state = self.env.get_init_state()
-        self.env.set_state(state)
         continue_next = True
         while continue_next:
+            # select the action
             chosen_action = self.select_action(state)
             action = self.env.index_to_action(chosen_action)
             next_state, reward, terminal = self.env.step(action)
@@ -54,16 +54,15 @@ class RWB:
 
     # select an action randomly and return it
     def select_action(self, state):
-        r, c = state
         # use softmax to get probabilities for each action
-        action_probabilities = util_rwb.softmax((self.policy_params[(r, c)]))
+        action_probabilities = util_rwb.softmax((self.policy_params[state]))
         # randomly select action
         chosen_action = np.random.choice(len(action_probabilities), p=action_probabilities)
         return chosen_action
     
 
     # make the updates for the step sizes in the policy and baseline parameters
-    def make_updates(self, episode):
+    def make_updates_in_episode(self, episode):
         G = 0   # return
         for curr in reversed(range(len(episode))):
             state, chosen_action, reward = episode[curr]
@@ -72,11 +71,9 @@ class RWB:
             #print(G)
             #compute gradient
             # update policy parameter
-            action_probabilities = util_rwb.softmax((self.policy_params[state]))
-            diff = G - baseline
-            self.policy_params[state] += self.alpha * diff # * gradient
+            self.policy_params[state] += self.alpha # * gradient
             #print(self.policy_params[state])
             # update baseline parameter
             baseline = self.baseline_params[state]
-            self.baseline_params[state] += self.b * diff
+            self.baseline_params[state] += self.b * (G - baseline)
             #print(self.baseline_params[state])
