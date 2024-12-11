@@ -12,11 +12,11 @@ class RWB:
         self.alpha = alpha     
         self.b = b             
         # initialize policy parameterization
-        self.policy_params = {}
+        self.policy_parameters = {}
         for state in env.get_states():
             self.policy_params[state] = np.zeros(len(env.get_actions()))
         # initialize baseline parameterization
-        self.baseline_params = {}
+        self.baseline_parameters = {}
         for state in env.get_states():
             self.baseline_params[state] = 0
 
@@ -55,7 +55,7 @@ class RWB:
     # select an action randomly and return it
     def select_action(self, state):
         # use softmax to get probabilities for each action
-        action_probabilities = util_rwb.softmax((self.policy_params[state]))
+        action_probabilities = util_rwb.softmax((self.policy_parameters[state]))
         # randomly select action
         chosen_action = np.random.choice(len(action_probabilities), p=action_probabilities)
         return chosen_action
@@ -74,6 +74,6 @@ class RWB:
             self.policy_params[state] += self.alpha # * gradient
             #print(self.policy_params[state])
             # update baseline parameter
-            baseline = self.baseline_params[state]
-            self.baseline_params[state] += self.b * (G - baseline)
+            baseline = self.baseline_parameters[state]
+            self.baseline_parameters[state] += self.b * baseline
             #print(self.baseline_params[state])
